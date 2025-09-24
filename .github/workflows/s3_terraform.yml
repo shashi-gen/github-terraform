@@ -1,0 +1,27 @@
+name: S3 bucket pipeline
+on:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+    inputs:
+      s3_bucket_name:
+          required: true
+          type: string
+      region:
+          required: true
+          default: us-east-1
+          type: string
+          options:
+          - us-east-1
+          - ap-southeast-1 
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: aws credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::805242202477:role/githubaction-role
+          aws-region: ${github.inputs.region}
+      - name: aws cli test
+        run: aws s3 ls
